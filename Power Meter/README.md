@@ -1,15 +1,25 @@
 A new take on the idea of a power meter. 
 This one is unique in that it measures power utilization, i.e. how hard your power generators are working, or in other words how close are you to being in trouble. 
 
-Outputs three signals: percentage of power production utilization broken down by the three priorities: primary, secondary and tertiary. 
-Primary production is solar panels (also wind turbines in mods). 
+Outputs four signals: percentage of power production utilization broken down by the four priorities: solar, primary, secondary and tertiary. 
+Solar is self explanatory. 
+Primary production is apparently not used in vanilla, but used in mods for things like wind turbines. 
 Secondary production is steam engines and steam turbines (and various similar things in mods). 
 Tertiary production is accumulators. 
 
 As an example, suppose you have ten solar panels (60 kW each) and 1 steam engine (900 kW), and your factory consumes 690 kW of power. 
-In this case the power meter combinator would output "primary" = 100 (solar panels are fully utilized to give 600 kW), 
+In this case the power meter combinator would output "solar" = 100, (solar panels are fully utilized to give 600 kW), 
+"primary" = 100 (there are no primary generators)
 and "secondary" = 10 (the lone steam engine is utilized for 10% to provide the remaining 90 kW). 
 In this case "tertiary" signal would be zero, because there are no accumulators. 
+
+Unfortunately implementation for solar is limited, due to the way the game handles solar power. 
+The game doesn't keep track of individual solar generators, therefore the meter can only give a binary signal. 
+Either the solar power is not yet fully utilized: "solar" = 0, or it is: solar = "100". 
+No solar panels in the network counts as full utilization. 
+The same is true for other priorities, no generators of a higher priority counts as full utilization, 
+for example if your base runs fully on tertiary sources, the meter will output 100 utilization for solar, primary and secondary, 
+and the real utilization percentage for tertiary.    
 
 Currently the signals that the meter combinator outputs are hardcoded (see their icons in the thumbnail), but they are custom signals, so they shouldn't conflict with anything. 
 

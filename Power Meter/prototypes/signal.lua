@@ -28,5 +28,13 @@ data:extend({
         icon_size = 64,
         subgroup = "power-meter-signal",
         order = "p[power-meter-signal]-3[tertiary]"
-    }
+    },
+    {
+        type = "virtual-signal",
+        name = "power-meter-solar",
+        icon = "__PowerPlusPowerMeter__/graphics/icons/power-solar.png",
+        icon_size = 64,
+        subgroup = "power-meter-signal",
+        order = "p[power-meter-signal]-0[solar]"
+    },
 })

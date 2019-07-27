@@ -3,6 +3,7 @@ METER_ENTITY = "power-meter-usage-combinator"
 INTERFACE_PRIMARY = "power-meter-interface-p1"
 INTERFACE_SECONDARY = "power-meter-interface-p2"
 INTERFACE_TERTIARY = "power-meter-interface-p3"
+INTERFACE_SOLAR = "power-meter-interface-ps"
 METER_REGISTRY = "meter_registry"
 
 function create_meter(meter_entity)
@@ -39,6 +40,18 @@ end
 function update_meter(meter_block)
     local power_parameters = {}
     for priority, interface in pairs(meter_block["interfaces"]) do
+        -- Solar hack, if "primary" is on, it means we're past solar
+        if interface.name == INTERFACE_PRIMARY then
+            local solar_utilizaiton = 0
+            if interface.energy_generated_last_tick > 0 then
+                solar_utilizaiton = 100
+            end
+            table.insert(power_parameters, {
+                index = 1,
+                signal = { name = ("power-meter-solar"), type = "virtual" },
+                count = solar_utilizaiton
+            })
+        end
         table.insert(power_parameters, {
             index = (#power_parameters + 1),
             signal = { name = ("power-meter-" .. priority), type = "virtual" },
@@ -85,6 +98,7 @@ function handle_update_meters()
     end
 end
 
+script.on_init(handle_init)
 script.on_configuration_changed(handle_init)
 
 script.on_event(

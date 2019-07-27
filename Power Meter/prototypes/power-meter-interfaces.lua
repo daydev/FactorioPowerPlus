@@ -57,5 +57,11 @@ interface_tertiary.name = "power-meter-interface-p3"
 interface_tertiary.icon = "__PowerPlusPowerMeter__/graphics/icons/power-tertiary.png"
 interface_tertiary.energy_source.usage_priority = "tertiary"
 
+-- Not used because the game doesn't keep track of individual solar generators anyway
+--local interface_solar = util.table.deepcopy(interface_primary)
+--interface_solar.name = "power-meter-interface-ps"
+--interface_solar.icon = "__PowerPlusPowerMeter__/graphics/icons/power-solar.png"
+--interface_solar.energy_source.usage_priority = "solar"
+
 
 data:extend({ interface_primary, interface_secondary, interface_tertiary })

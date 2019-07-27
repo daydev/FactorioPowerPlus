@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2019-07-27
+  Features:
+    - Upgraded the meter to handle the special "solar" priority, unfortunately for the moment only a limited binary signal.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2019-07-27
+  Bugfixes:
+    - Fixed a crash on a new game.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2019-07-27
+  Features:
+    - Power utilization meter that outputs the percentage of power production utilization over the three priorities: primary, secondary, tertiary.
+  Locale:
+    - English, Russian, Ukrainian.

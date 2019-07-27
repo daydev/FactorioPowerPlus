@@ -99,7 +99,7 @@ data:extend({
         collision_box = { { -0.4, -0.4 }, { 0.4, 0.4 } },
         selection_box = { { -0.5, -0.5 }, { 0.6, 0.6 } },
 
-        item_slot_count = 3,
+        item_slot_count = 4,
         activity_led_light = { intensity = 0.8, size = 1, color = { r = 1.0, g = 1.0, b = 1.0 } },
         activity_led_light_offsets = {
             offset_xy,
