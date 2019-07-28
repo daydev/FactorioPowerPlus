@@ -42,14 +42,14 @@ function update_meter(meter_block)
     for priority, interface in pairs(meter_block["interfaces"]) do
         -- Solar hack, if "primary" is on, it means we're past solar
         if interface.name == INTERFACE_PRIMARY then
-            local solar_utilizaiton = 0
+            local solar_utilization = 0
             if interface.energy_generated_last_tick > 0 then
-                solar_utilizaiton = 100
+                solar_utilization = 100
             end
             table.insert(power_parameters, {
                 index = 1,
                 signal = { name = ("power-meter-solar"), type = "virtual" },
-                count = solar_utilizaiton
+                count = solar_utilization
             })
         end
         table.insert(power_parameters, {

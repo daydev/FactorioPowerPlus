@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2019-07-27
+  Bugfixes:
+    - Hopefully fixed a reported failure to unlock the meter recipe with the technology already researched.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2019-07-27
   Features:

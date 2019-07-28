@@ -1,4 +1,4 @@
-VERSION := 0.1.2
+VERSION := 0.1.3
 NAME := PowerPlusPowerMeter
 FACTORIO_HOME := $$HOME/bin/games/factorio
 
@@ -7,7 +7,7 @@ all: clean build install_mod
 build:
 	mkdir build/
 	mkdir build/$(NAME)_$(VERSION)
-	cp -R info.json changelog.txt control.lua data.lua data-updates.lua settings.lua thumbnail.png graphics locale prototypes build/$(NAME)_$(VERSION)
+	cp -R info.json changelog.txt control.lua data.lua data-updates.lua settings.lua thumbnail.png graphics locale migrations prototypes build/$(NAME)_$(VERSION)
 	cd build && zip -r $(NAME)_$(VERSION).zip $(NAME)_$(VERSION)
 
 clean:
