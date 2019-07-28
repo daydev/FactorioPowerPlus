@@ -1,35 +1,18 @@
-A new take on the idea of a power meter. 
-This one is unique in that it measures power utilization, i.e. how hard your power generators are working, or in other words how close are you to being in trouble. 
+A new take on the idea of a power meter. This one is unique in that it measures power utilization, i.e. how hard your power generators are working, or in other words how close are you to being in trouble. 
 
-Outputs four signals: percentage of power production utilization broken down by the four priorities: solar, primary, secondary and tertiary. 
-Solar is self explanatory. 
-Primary production is apparently not used in vanilla, but used in mods for things like wind turbines. 
-Secondary production is steam engines and steam turbines (and various similar things in mods). 
-Tertiary production is accumulators. 
+Outputs four signals: percentage of power production utilization broken down by the four priorities: solar, primary, secondary and tertiary. Solar is self explanatory. Primary production is apparently not used in vanilla, but used in mods for things like wind turbines. Secondary production is steam engines and steam turbines (and various similar things in mods). Tertiary production is accumulators. In case you don't know, the priorities work as follows: in the order of solar, primary, secondary, tertiary, start with the highest priority (solar) and utilize it to the extent needed to meet the demand. If all of the generators of the priority are fully utilized, but there's sill more demand, go to the next priority, rinse, repeat. 
 
-As an example, suppose you have ten solar panels (60 kW each) and 1 steam engine (900 kW), and your factory consumes 690 kW of power. 
-In this case the power meter combinator would output "solar" = 100, (solar panels are fully utilized to give 600 kW), 
-"primary" = 100 (there are no primary generators)
-and "secondary" = 10 (the lone steam engine is utilized for 10% to provide the remaining 90 kW). 
-In this case "tertiary" signal would be zero, because there are no accumulators. 
+As an example, suppose you have ten solar panels (60 kW each) and 1 steam engine (900 kW), and your factory consumes 690 kW of power. In this case the power meter combinator would output "solar" = 100, (solar panels are fully utilized to give 600 kW), "primary" = 100 (there are no primary generators) and "secondary" = 10 (the lone steam engine is utilized for 10% to provide the remaining 90 kW). In this case "tertiary" signal would be zero, because there are no accumulators. 
 
-Unfortunately implementation for solar is limited, due to the way the game handles solar power. 
-The game doesn't keep track of individual solar generators, therefore the meter can only give a binary signal. 
-Either the solar power is not yet fully utilized: "solar" = 0, or it is: solar = "100". 
-No solar panels in the network counts as full utilization. 
-The same is true for other priorities, no generators of a higher priority counts as full utilization, 
-for example if your base runs fully on tertiary sources, the meter will output 100 utilization for solar, primary and secondary, 
-and the real utilization percentage for tertiary.    
+Unfortunately implementation for solar is limited, due to the way the game handles solar power. The game doesn't keep track of individual solar generators, therefore the meter can only give a binary signal. Either the solar power is not yet fully utilized: "solar" = 0, or it is: solar = "100". No solar panels in the network counts as full utilization. The same is true for other priorities, no generators of a higher priority counts as full utilization, for example if your base runs fully on tertiary sources, the meter will output 100 utilization for solar, primary and secondary, and the real utilization percentage for tertiary.    
+
+A note on a couple of edge cases. First, if your generators' available performance is less than max, this will not be reflected in the reading. The meter will read as if the generators have full maximum performance available, unless they're already past their actual available performance, then it will correctly show 100. This is consistent with the power stats screen in the game, you can check by feeding a steam turbine low temperature steam from boilers and observing how the Production bar behaves as if the turbine had max available performance, unless it's already past that, then the bar is full. Second, if you place a meter in the overlap between two disconnected power networks, like the accumulator bridge in the wiki, you will get an apparently bogus reading, which seems to be, to the best of my guess, the sum of power utilization in one network plus utilization in the second, but the latter is scaled proportionally to (100 - utilization) of the first one.  Basically, P1 + P2 * (100 - P1) / 100. This again is consistent with the behavior of any generator placed in such a way, it's seems to be claimed by the networks in this peculiar way, so what you are getting in this case is the correct reading for utilization of the generators in this overlapped quasi-network. 
 
 Currently the signals that the meter combinator outputs are hardcoded (see their icons in the thumbnail), but they are custom signals, so they shouldn't conflict with anything. 
 
 The meter should be able to function with any modded power source, unless a mod does something really crazy. 
 
-The mod should also be UPS friendly, as the meter uses local hax to make the measurements, not global scans, so every meter updates in (small) constant time.
-Be warned, though, due to the nature of the hax it uses, the meter actually provides a small amount of free power (up to 18 kW at the extreme, usually a few kW), 
-and if you try to replace your solar fields with power meters, then you probably **will** run into UPS issues.   
+The mod should also be UPS friendly, as the meter uses local hax to make the measurements, not global scans, so every meter updates in (small) constant time. Be warned, though, due to the nature of the hax it uses, the meter actually provides a small amount of free power (up to 1.8 kW at the extreme, usually a few hundred watts), and if you try to replace your solar fields with power meters, then you probably **will** run into UPS issues. Just in case, you can adjust the update interval of the meter in the mod settings.   
 
-If instead of or in addition to power utilization you want to measure power production broken down by generator type 
-or raw power production/consumption numbers I direct you to 
-[Circuit Power Measurement Combinator](https://mods.factorio.com/mod/Circuit_Power_Measurement_Combinator) 
+If instead of or in addition to power utilization you want to measure power production broken down by generator type or raw power production/consumption numbers, I direct you to [Circuit Power Measurement Combinator](https://mods.factorio.com/mod/Circuit_Power_Measurement_Combinator) 
 and [Factor-I/O](https://mods.factorio.com/mod/FactorIO)

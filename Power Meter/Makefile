@@ -1,4 +1,4 @@
-VERSION := 0.1.3
+VERSION := 0.1.4
 NAME := PowerPlusPowerMeter
 FACTORIO_HOME := $$HOME/bin/games/factorio
 

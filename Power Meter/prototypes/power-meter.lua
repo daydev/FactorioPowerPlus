@@ -117,19 +117,9 @@ data:extend({
 
         vehicle_impact_sound = { filename = '__base__/sound/car-metal-impact.ogg', volume = 0.65 },
 
-        sprites = {
-            north = combinator_sprite,
-            south = combinator_sprite,
-            east = combinator_sprite,
-            west = combinator_sprite
-        },
+        sprites =  combinator_sprite,
 
-        activity_led_sprites = {
-            north = activity_led_sprite,
-            south = activity_led_sprite,
-            east = activity_led_sprite,
-            west = activity_led_sprite
-        },
+        activity_led_sprites = activity_led_sprite,
 
         circuit_wire_connection_points = {
             wire_location,

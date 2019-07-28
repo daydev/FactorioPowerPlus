@@ -5,7 +5,7 @@ data:extend({
         hidden = "true",
         default_temperature = 0,
         max_temperature = 0,
-        fuel_value = "1kJ",
+        fuel_value = "0.1kJ",
         auto_barrel = false,
         heat_capacity = "1kJ",
         base_color = {r = 0, g = 0, b = 128},

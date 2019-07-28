@@ -55,7 +55,7 @@ function update_meter(meter_block)
         table.insert(power_parameters, {
             index = (#power_parameters + 1),
             signal = { name = ("power-meter-" .. priority), type = "virtual" },
-            count = math.ceil(interface.energy_generated_last_tick)
+            count = math.ceil(interface.energy_generated_last_tick * 10)
         })
         interface.fluidbox[1] = { name = "void-energy", amount = 200, temperature = 0 }
     end
