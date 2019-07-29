@@ -53,11 +53,7 @@ function update_meter(meter_block)
                     count = solar_utilization
                 })
             end
-            table.insert(power_parameters, {
-                index = (#power_parameters + 1),
-                signal = { name = ("power-meter-" .. priority), type = "virtual" },
-                count = math.ceil(interface.energy_generated_last_tick * 10)
-            })
+            insert_signals(power_parameters, interface, priority)
             interface.fluidbox[1] = { name = "void-energy", amount = 200, temperature = 0 }
         else
             local meter = meter_block["meter"]
@@ -69,6 +65,22 @@ function update_meter(meter_block)
         end
     end
     meter_block["meter"].get_or_create_control_behavior().parameters = { parameters = power_parameters }
+end
+
+function insert_signals(parameters, interface, priority)
+    local utilization = math.ceil(interface.energy_generated_last_tick * 10)
+    table.insert(parameters, {
+        index = (#parameters + 1),
+        signal = { name = ("power-meter-" .. priority), type = "virtual" },
+        count = utilization
+    })
+
+    table.insert(parameters, {
+        index = (#parameters + 1),
+        signal = { name = ("power-meter-" .. priority .. "-capacity"), type = "virtual" },
+        count = 100 - utilization
+    })
+
 end
 
 function handle_init()
