@@ -5,6 +5,6 @@ data:extend({
         setting_type = "startup",
         minimum_value = 1,
         maximum_value = 60,
-        default_value = 1
+        default_value = 6
     }
 })

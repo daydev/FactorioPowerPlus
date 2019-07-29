@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2019-07-29
+  Changes:
+    - Reduced the default meter update rate to 10 times per second.
+  Bugfixes:
+    - Future proofing the code against potential bugs.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2019-07-28
   Changes:

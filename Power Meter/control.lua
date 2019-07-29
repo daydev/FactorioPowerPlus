@@ -1,63 +1,72 @@
 UPDATE_INTERVAL_SETTING = "power-meter-tick-update-interval"
 METER_ENTITY = "power-meter-usage-combinator"
-INTERFACE_PRIMARY = "power-meter-interface-p1"
-INTERFACE_SECONDARY = "power-meter-interface-p2"
-INTERFACE_TERTIARY = "power-meter-interface-p3"
-INTERFACE_SOLAR = "power-meter-interface-ps"
 METER_REGISTRY = "meter_registry"
+INTERFACE_CONFIG = {
+    primary = "power-meter-interface-p1",
+    secondary = "power-meter-interface-p2",
+    tertiary = "power-meter-interface-p3"
+}
 
 function create_meter(meter_entity)
     local new_meter_block = {}
     new_meter_block["meter"] = meter_entity
-    new_meter_block["interfaces"] = {}
-    new_meter_block["interfaces"]["primary"] = meter_entity.surface.create_entity({
-        name = INTERFACE_PRIMARY,
-        position = meter_entity.position,
-        force = meter_entity.force
-    })
-    new_meter_block["interfaces"]["secondary"] = meter_entity.surface.create_entity({
-        name = INTERFACE_SECONDARY,
-        position = meter_entity.position,
-        force = meter_entity.force
-    })
-    new_meter_block["interfaces"]["tertiary"] = meter_entity.surface.create_entity({
-        name = INTERFACE_TERTIARY,
-        position = meter_entity.position,
-        force = meter_entity.force
-    })
+    prepare_or_repair_meter(new_meter_block, meter_entity)
     global[METER_REGISTRY][meter_entity.unit_number] = new_meter_block
 end
 
-function remove_meter(meter_entity)
-    if global[METER_REGISTRY][meter_entity.unit_number] then
-        for _, interface in pairs(global[METER_REGISTRY][meter_entity.unit_number]["interfaces"]) do
+function prepare_or_repair_meter(meter_block, meter)
+    local interfaces = meter_block["interfaces"] or {}
+    for priority, interface in pairs(INTERFACE_CONFIG) do
+        if (not interfaces[priority]) or (not interfaces[priority].valid) then
+            interfaces[priority] = meter.surface.create_entity({
+                name = interface,
+                position = meter.position,
+                force = meter.force
+            })
+        end
+    end
+    meter_block["interfaces"] = interfaces
+end
+
+function remove_meter(meter_id)
+    if global[METER_REGISTRY][meter_id] then
+        for _, interface in pairs(global[METER_REGISTRY][meter_id]["interfaces"]) do
             interface.destroy()
         end
-        global[METER_REGISTRY][meter_entity.unit_number] = nil
+        global[METER_REGISTRY][meter_id] = nil
     end
 end
 
 function update_meter(meter_block)
     local power_parameters = {}
     for priority, interface in pairs(meter_block["interfaces"]) do
-        -- Solar hack, if "primary" is on, it means we're past solar
-        if interface.name == INTERFACE_PRIMARY then
-            local solar_utilization = 0
-            if interface.energy_generated_last_tick > 0 then
-                solar_utilization = 100
+        if interface.valid then
+            -- Solar hack, if "primary" is on, it means we're past solar
+            if priority == "primary" then
+                local solar_utilization = 0
+                if interface.energy_generated_last_tick > 0 then
+                    solar_utilization = 100
+                end
+                table.insert(power_parameters, {
+                    index = 1,
+                    signal = { name = ("power-meter-solar"), type = "virtual" },
+                    count = solar_utilization
+                })
             end
             table.insert(power_parameters, {
-                index = 1,
-                signal = { name = ("power-meter-solar"), type = "virtual" },
-                count = solar_utilization
+                index = (#power_parameters + 1),
+                signal = { name = ("power-meter-" .. priority), type = "virtual" },
+                count = math.ceil(interface.energy_generated_last_tick * 10)
             })
+            interface.fluidbox[1] = { name = "void-energy", amount = 200, temperature = 0 }
+        else
+            local meter = meter_block["meter"]
+            log("Error: A power meter on surface [" .. meter.surface.name ..
+                    "]  at " .. serpent.line(meter.position) ..
+                    " has an invalid interface for [" .. priority ..
+                    "]. Attempting to repair.")
+            return prepare_or_repair_meter(meter_block, meter)
         end
-        table.insert(power_parameters, {
-            index = (#power_parameters + 1),
-            signal = { name = ("power-meter-" .. priority), type = "virtual" },
-            count = math.ceil(interface.energy_generated_last_tick * 10)
-        })
-        interface.fluidbox[1] = { name = "void-energy", amount = 200, temperature = 0 }
     end
     meter_block["meter"].get_or_create_control_behavior().parameters = { parameters = power_parameters }
 end
@@ -78,23 +87,32 @@ end
 function handle_destroy(event)
     local entity = event.entity
     if entity and entity.valid and entity.name == METER_ENTITY then
-        return remove_meter(entity)
+        return remove_meter(entity.unit_number)
     end
 end
 
 function handle_destroy_surface(event)
     local surface = game.surfaces[event.surface_index]
-    if surface then
+    if surface and surface.valid then
         local meters = surface.find_entities_filtered { name = METER_ENTITY }
-        for _, m in pairs(meters) do
-            remove_meter(m)
+        if meters then
+            for _, m in pairs(meters) do
+                if m.valid then
+                    remove_meter(m.unit_number)
+                end
+            end
         end
     end
 end
 
 function handle_update_meters()
-    for _, meter_block in pairs(global[METER_REGISTRY]) do
-        update_meter(meter_block)
+    for id, meter_block in pairs(global[METER_REGISTRY]) do
+        if meter_block["meter"].valid then
+            update_meter(meter_block)
+        else
+            log("Error: Invalid power meter encountered. Cleaning up.")
+            remove_meter(id)
+        end
     end
 end
 
