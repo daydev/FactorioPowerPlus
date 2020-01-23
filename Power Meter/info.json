@@ -1,7 +1,7 @@
 {
   "name": "PowerPlusPowerMeter",
-  "version": "0.1.6",
-  "factorio_version": "0.17",
+  "version": "0.2.0",
+  "factorio_version": "0.18",
   "title": "Power+: Power Utilization Meter",
   "author": "daydev",
   "description": "Adds a power meter combinator that directly outputs the percentage of power utilization in the electrical network over the four generation priorities.",

@@ -41,20 +41,8 @@ function update_meter(meter_block)
     local power_parameters = {}
     for priority, interface in pairs(meter_block["interfaces"]) do
         if interface.valid then
-            -- Solar hack, if "primary" is on, it means we're past solar
-            if priority == "primary" then
-                local solar_utilization = 0
-                if interface.energy_generated_last_tick > 0 then
-                    solar_utilization = 100
-                end
-                table.insert(power_parameters, {
-                    index = 1,
-                    signal = { name = ("power-meter-solar"), type = "virtual" },
-                    count = solar_utilization
-                })
-            end
             insert_signals(power_parameters, interface, priority)
-            interface.fluidbox[1] = { name = "void-energy", amount = 200, temperature = 0 }
+            interface.fluidbox[1] = { name = "void-energy", amount = 100, temperature = 0 }
         else
             local meter = meter_block["meter"]
             log("Error: A power meter on surface [" .. meter.surface.name ..
@@ -69,6 +57,14 @@ end
 
 function insert_signals(parameters, interface, priority)
     local utilization = math.ceil(interface.energy_generated_last_tick * 10)
+    -- Solar hack, if "primary" is on, it means we're past solar
+    if priority == "primary" then
+        table.insert(parameters, {
+            index = 1,
+            signal = { name = ("power-meter-solar"), type = "virtual" },
+            count = utilization > 0 and 100 or 0
+        })
+    end
     table.insert(parameters, {
         index = (#parameters + 1),
         signal = { name = ("power-meter-" .. priority), type = "virtual" },
