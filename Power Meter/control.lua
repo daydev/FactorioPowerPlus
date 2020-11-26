@@ -52,7 +52,7 @@ function update_meter(meter_block)
             return prepare_or_repair_meter(meter_block, meter)
         end
     end
-    meter_block["meter"].get_or_create_control_behavior().parameters = { parameters = power_parameters }
+    meter_block["meter"].get_or_create_control_behavior().parameters = power_parameters
 end
 
 function insert_signals(parameters, interface, priority)
